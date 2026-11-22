@@ -1,0 +1,17 @@
+version: 2
+
+sources:
+  - name: bronze
+    description: "Raw AdventureWorks ERP extract, all columns as text, loaded by scripts/load_bronze.py"
+    schema: bronze
+    tables:
+      - name: sales_order_header
+      - name: sales_order_detail
+      - name: customer
+      - name: sales_territory
+      - name: product
+      - name: product_subcategory
+      - name: product_category
+      - name: product_inventory
+      - name: location
+      - name: transaction_history
