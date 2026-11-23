@@ -1,0 +1,58 @@
+version: 2
+
+models:
+  - name: stg_customer
+    description: "Customers from ERP Sales.Customer, typed, with hub hash key and attribute hash diff."
+    columns:
+      - name: hk_customer
+        description: "MD5 hash of customer_id. Joins to hub_customer."
+        data_tests: [not_null]
+      - name: hd_customer
+        description: "MD5 hash of all descriptive columns. A change creates a new satellite version."
+
+  - name: stg_sales_order_header
+    description: "Sales order headers from ERP Sales.SalesOrderHeader: dates, status and amounts."
+    columns:
+      - name: hk_sales_order
+        data_tests: [not_null]
+      - name: hk_sales_order_customer
+        description: "MD5 hash of sales_order_id and customer_id. Joins to link_sales_order_customer."
+
+  - name: stg_sales_order_detail
+    description: "Sales order lines from ERP Sales.SalesOrderDetail: product, quantity and price per line."
+    columns:
+      - name: hk_sales_order_line
+        description: "MD5 hash of sales_order_id, sales_order_detail_id and product_id."
+        data_tests: [not_null]
+
+  - name: stg_product
+    description: "Product master from ERP Production.Product: names, costs, list prices and selling dates."
+    columns:
+      - name: hk_product
+        data_tests: [not_null]
+
+  - name: stg_location
+    description: "Warehouse and production locations from ERP Production.Location."
+
+  - name: stg_product_inventory
+    description: "Stock on hand per product and location from ERP Production.ProductInventory."
+    columns:
+      - name: hk_product_location
+        data_tests: [not_null]
+
+  - name: stg_transaction_history
+    description: "Inventory movements from ERP Production.TransactionHistory. Type W = work order, S = sales order, P = purchase order."
+    columns:
+      - name: transaction_type
+        data_tests:
+          - accepted_values:
+              arguments: {values: ['W', 'S', 'P']}
+
+  - name: stg_sales_territory
+    description: "Reference table: sales territories with country and region group."
+
+  - name: stg_product_subcategory
+    description: "Reference table: product subcategories."
+
+  - name: stg_product_category
+    description: "Reference table: product categories (Bikes, Components, Clothing, Accessories)."
