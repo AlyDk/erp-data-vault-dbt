@@ -1,0 +1,65 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: "Calendar from the first to the last order year. date_key is yyyymmdd."
+    columns:
+      - name: date_key
+        data_tests: [unique, not_null]
+
+  - name: dim_customer
+    description: "Current customer attributes with sales territory. customer_key is the Data Vault hash key."
+    columns:
+      - name: customer_key
+        data_tests: [unique, not_null]
+      - name: customer_type
+        data_tests:
+          - accepted_values:
+              arguments: {values: ['Store', 'Individual']}
+
+  - name: dim_product
+    description: "Current product attributes with category and subcategory."
+    columns:
+      - name: product_key
+        data_tests: [unique, not_null]
+
+  - name: dim_location
+    description: "Warehouse and production locations."
+    columns:
+      - name: location_key
+        data_tests: [unique, not_null]
+
+  - name: fact_sales
+    description: >
+      Sales at order line grain. sales_amount ties to the ERP line totals.
+      cost_amount_at_current_cost uses today's standard cost, not the cost at order time.
+    columns:
+      - name: sales_line_key
+        data_tests: [unique, not_null]
+      - name: customer_key
+        data_tests:
+          - relationships:
+              arguments: {to: ref('dim_customer'), field: customer_key}
+      - name: product_key
+        data_tests:
+          - relationships:
+              arguments: {to: ref('dim_product'), field: product_key}
+      - name: order_date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_date'), field: date_key}
+
+  - name: fact_inventory
+    description: "Current stock on hand per product and location, valued at standard cost."
+    columns:
+      - name: stock_key
+        data_tests: [unique, not_null]
+      - name: product_key
+        data_tests:
+          - relationships:
+              arguments: {to: ref('dim_product'), field: product_key}
+      - name: location_key
+        data_tests:
+          - relationships:
+              arguments: {to: ref('dim_location'), field: location_key}

@@ -147,3 +147,15 @@ models:
           - not_null
           - relationships:
               arguments: {to: ref('link_product_location'), field: hk_product_location}
+
+  - name: sat_location
+    description: "Location name, cost rate and availability over time."
+    data_tests:
+      - unique_combination:
+          arguments: {columns: [hk_location, load_dts]}
+    columns:
+      - name: hk_location
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('hub_location'), field: hk_location}
