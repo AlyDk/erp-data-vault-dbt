@@ -23,7 +23,18 @@ table _Measures
 		displayFolder: Sales
 		lineageTag: ab928f27-6956-4a34-8b00-6c74e0d8e5f9
 
-	measure 'Sales LY' = CALCULATE ( [Sales], SAMEPERIODLASTYEAR ( dim_date[date_day] ) )
+	/// Sales in the same period last year. Blank for periods after the last order date, so the line stops where the data stops.
+	measure 'Sales LY' =
+			
+			VAR LastOrderKey =
+			    CALCULATE ( MAX ( fact_sales[order_date_key] ), REMOVEFILTERS () )
+			VAR FirstVisibleKey =
+			    MIN ( dim_date[date_key] )
+			RETURN
+			    IF (
+			        FirstVisibleKey <= LastOrderKey,
+			        CALCULATE ( [Sales], SAMEPERIODLASTYEAR ( dim_date[date_day] ) )
+			    )
 		formatString: #,0
 		displayFolder: Sales
 		lineageTag: 292d2087-6024-4293-81b7-929deddcefdb
@@ -56,6 +67,17 @@ table _Measures
 		formatString: #,0
 		displayFolder: Inventory
 		lineageTag: 5e11b384-6527-427e-9d00-c621364afa34
+
+	/// 1 when a product's stock is below its reorder point. Use as a visual filter (is 1).
+	measure 'Below Reorder Flag' =
+			IF (
+			    NOT ISBLANK ( [Stock Qty] )
+			        && [Stock Qty] < MAX ( dim_product[reorder_point] ),
+			    1
+			)
+		formatString: 0
+		displayFolder: Inventory
+		lineageTag: 4e94a680-ab23-4832-b117-9d4c7f3085b3
 
 	column placeholder
 		isHidden
