@@ -1,0 +1,88 @@
+table fact_inventory
+	lineageTag: e7e1560b-a0e0-404e-bc6f-5e0fa4608dd4
+
+	column stock_key
+		dataType: string
+		isHidden
+		lineageTag: 63fed7c1-54c7-4659-bd7d-615eb7f46323
+		summarizeBy: none
+		sourceColumn: stock_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_key
+		dataType: string
+		isHidden
+		lineageTag: c4740a70-b3af-4a8c-bcca-a761dee3fae4
+		summarizeBy: none
+		sourceColumn: product_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column location_key
+		dataType: string
+		isHidden
+		lineageTag: aebc8ea4-dc33-4abd-a9f9-c0840c5aaf54
+		summarizeBy: none
+		sourceColumn: location_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column shelf
+		dataType: string
+		lineageTag: 857db1fc-a867-4fe5-ae4e-181657440f53
+		summarizeBy: none
+		sourceColumn: shelf
+
+		annotation SummarizationSetBy = Automatic
+
+	column bin
+		dataType: int64
+		formatString: 0
+		lineageTag: 90c88582-9e7a-4178-b3f4-e2c8faef30d6
+		summarizeBy: sum
+		sourceColumn: bin
+
+		annotation SummarizationSetBy = Automatic
+
+	column quantity_on_hand
+		dataType: int64
+		formatString: 0
+		lineageTag: d924c5e3-0093-4f39-9c65-a92ebe29d688
+		summarizeBy: sum
+		sourceColumn: quantity_on_hand
+
+		annotation SummarizationSetBy = Automatic
+
+	column stock_value_at_standard_cost
+		dataType: double
+		lineageTag: 214e1281-fc3f-4598-9d62-667d9d8e8a5e
+		summarizeBy: sum
+		sourceColumn: stock_value_at_standard_cost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column snapshot_date_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: d8365ddb-2113-4595-bfcd-bbbf2f6dcf72
+		summarizeBy: sum
+		sourceColumn: snapshot_date_key
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_inventory = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "fact_inventory.parquet"))
+				in
+				    Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

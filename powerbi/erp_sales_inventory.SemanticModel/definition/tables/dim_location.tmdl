@@ -1,0 +1,61 @@
+table dim_location
+	lineageTag: a54ee3de-f3ee-49e5-a2fa-81f19e9e7d24
+
+	column location_key
+		dataType: string
+		isHidden
+		lineageTag: b237fed4-5d24-46a3-a3ae-342ea9830b0e
+		summarizeBy: none
+		sourceColumn: location_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column location_id
+		dataType: int64
+		formatString: 0
+		lineageTag: cbf86b0c-1f86-4578-b88e-32e008ff8cb4
+		summarizeBy: none
+		sourceColumn: location_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column location_name
+		dataType: string
+		lineageTag: 199aa407-2244-402d-b532-576c4ace9a14
+		summarizeBy: none
+		sourceColumn: location_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column cost_rate
+		dataType: double
+		lineageTag: 55706f93-47b0-407f-85ba-088b6fe39254
+		summarizeBy: none
+		sourceColumn: cost_rate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column availability
+		dataType: double
+		lineageTag: 84c9433e-c4d7-4f1a-9ea9-4e0c4e0f553b
+		summarizeBy: none
+		sourceColumn: availability
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition dim_location = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "dim_location.parquet"))
+				in
+				    Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

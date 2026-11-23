@@ -1,0 +1,73 @@
+table dim_customer
+	lineageTag: 6f6ad1e5-4f76-4691-9733-ca234d37bb57
+
+	column customer_key
+		dataType: string
+		isHidden
+		lineageTag: 8d5c27dd-ff72-4f2b-b778-dc29e4683f46
+		summarizeBy: none
+		sourceColumn: customer_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column customer_id
+		dataType: int64
+		formatString: 0
+		lineageTag: db71faad-c5ed-4003-89f4-b8cb2992290c
+		summarizeBy: none
+		sourceColumn: customer_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column account_number
+		dataType: string
+		lineageTag: 9c0c5404-6c36-45bd-9cf3-28f8b9a9adeb
+		summarizeBy: none
+		sourceColumn: account_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column customer_type
+		dataType: string
+		lineageTag: b153589f-3276-4685-ac7d-9c25490c92c8
+		summarizeBy: none
+		sourceColumn: customer_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column territory_name
+		dataType: string
+		lineageTag: 656714e5-1d96-40d7-8dcf-289d57c79582
+		summarizeBy: none
+		sourceColumn: territory_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column country_code
+		dataType: string
+		lineageTag: 932238c6-f818-44f1-bf1c-fdd36dfa5701
+		summarizeBy: none
+		sourceColumn: country_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column territory_group
+		dataType: string
+		lineageTag: c84c2761-0cd9-4ea6-90bf-9921461b767e
+		summarizeBy: none
+		sourceColumn: territory_group
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_customer = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "dim_customer.parquet"))
+				in
+				    Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

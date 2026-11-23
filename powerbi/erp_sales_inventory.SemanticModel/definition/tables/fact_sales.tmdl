@@ -1,0 +1,146 @@
+table fact_sales
+	lineageTag: 180e108d-73c5-425b-8e52-78b0e54570d7
+
+	column sales_line_key
+		dataType: string
+		isHidden
+		lineageTag: 56b6676b-9788-462d-b229-58b0e7d46584
+		summarizeBy: none
+		sourceColumn: sales_line_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column sales_order_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 8e341347-a0bb-42ec-8c29-34c792ba5ff1
+		summarizeBy: sum
+		sourceColumn: sales_order_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column sales_order_line_id
+		dataType: int64
+		formatString: 0
+		lineageTag: a233f38a-841e-4569-bf81-6df14fd8f997
+		summarizeBy: sum
+		sourceColumn: sales_order_line_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column sales_order_number
+		dataType: string
+		lineageTag: 7cc38873-b08f-467e-aef6-efb138fdeb50
+		summarizeBy: none
+		sourceColumn: sales_order_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_date_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 7a22c083-4179-4547-a2e0-265d2d5c7ab9
+		summarizeBy: none
+		sourceColumn: order_date_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column ship_date_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: b9f22489-ff28-41af-aa7d-f7bbe32f3914
+		summarizeBy: sum
+		sourceColumn: ship_date_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column customer_key
+		dataType: string
+		isHidden
+		lineageTag: dc7792e4-0862-4936-aa9e-bd64850174dc
+		summarizeBy: none
+		sourceColumn: customer_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_key
+		dataType: string
+		isHidden
+		lineageTag: 407693b1-a95e-4cfd-8c52-0abea3a71f54
+		summarizeBy: none
+		sourceColumn: product_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_online_order
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: b36a9978-8a40-41c5-9fd7-285771589547
+		summarizeBy: none
+		sourceColumn: is_online_order
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_qty
+		dataType: int64
+		formatString: 0
+		lineageTag: bc987abd-5aaa-4361-8c10-5f74d8604ec3
+		summarizeBy: sum
+		sourceColumn: order_qty
+
+		annotation SummarizationSetBy = Automatic
+
+	column unit_price
+		dataType: double
+		lineageTag: 01510f79-3623-4db0-8ecd-9810d483de55
+		summarizeBy: sum
+		sourceColumn: unit_price
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column unit_price_discount
+		dataType: double
+		lineageTag: 8529e4b5-ea7c-4f78-8d06-393592c0e8f5
+		summarizeBy: sum
+		sourceColumn: unit_price_discount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column sales_amount
+		dataType: double
+		lineageTag: ed622760-733c-42f3-b481-cf3e5732df7d
+		summarizeBy: sum
+		sourceColumn: sales_amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column cost_amount_at_current_cost
+		dataType: double
+		lineageTag: 6f1a137a-ee20-48fe-8b4c-baa19c44a196
+		summarizeBy: sum
+		sourceColumn: cost_amount_at_current_cost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition fact_sales = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "fact_sales.parquet"))
+				in
+				    Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

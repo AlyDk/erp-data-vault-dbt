@@ -1,0 +1,137 @@
+table dim_product
+	lineageTag: 5bfa9a2a-a24c-43d0-b279-2f8cbca70a86
+
+	column product_key
+		dataType: string
+		isHidden
+		lineageTag: fd97c074-27ef-4868-8b7f-97baa1dfe628
+		summarizeBy: none
+		sourceColumn: product_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_id
+		dataType: int64
+		formatString: 0
+		lineageTag: f82efc61-8173-4268-bada-e1ae68305115
+		summarizeBy: sum
+		sourceColumn: product_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_number
+		dataType: string
+		lineageTag: 5d78b933-2541-43b1-990a-b12292e8ff7c
+		summarizeBy: none
+		sourceColumn: product_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_name
+		dataType: string
+		lineageTag: a9c78b59-187a-494f-8996-858bcc5cce06
+		summarizeBy: none
+		sourceColumn: product_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_category
+		dataType: string
+		lineageTag: b63d5d3b-c9ab-4329-a135-de31707f3ec5
+		summarizeBy: none
+		sourceColumn: product_category
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_subcategory
+		dataType: string
+		lineageTag: 425c0a72-ebdc-4203-91ee-81f5200b1d23
+		summarizeBy: none
+		sourceColumn: product_subcategory
+
+		annotation SummarizationSetBy = Automatic
+
+	column color
+		dataType: string
+		lineageTag: fac5eebc-6af2-4206-b568-b55d5e479516
+		summarizeBy: none
+		sourceColumn: color
+
+		annotation SummarizationSetBy = Automatic
+
+	column size
+		dataType: string
+		lineageTag: 433f824c-9d79-446a-bec0-db465fe5e667
+		summarizeBy: none
+		sourceColumn: size
+
+		annotation SummarizationSetBy = Automatic
+
+	column standard_cost
+		dataType: double
+		lineageTag: 014657f5-7bb2-4ec4-b9a3-2abbc836c491
+		summarizeBy: sum
+		sourceColumn: standard_cost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column list_price
+		dataType: double
+		lineageTag: 372a0da7-34ab-468a-aa6f-92cd62560ff5
+		summarizeBy: sum
+		sourceColumn: list_price
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column is_finished_good
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 20b7ac2d-14a5-45d8-9ec4-4e0a0182d43f
+		summarizeBy: none
+		sourceColumn: is_finished_good
+
+		annotation SummarizationSetBy = Automatic
+
+	column safety_stock_level
+		dataType: int64
+		formatString: 0
+		lineageTag: 85dc2941-e788-4a72-a943-9fe3b0342463
+		summarizeBy: sum
+		sourceColumn: safety_stock_level
+
+		annotation SummarizationSetBy = Automatic
+
+	column reorder_point
+		dataType: int64
+		formatString: 0
+		lineageTag: 1b1a3674-bcf3-4e6c-9142-d5cbeeaa15f4
+		summarizeBy: sum
+		sourceColumn: reorder_point
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_active
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: f1ffdeba-b9a8-43fc-a402-64e293436765
+		summarizeBy: none
+		sourceColumn: is_active
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_product = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "dim_product.parquet"))
+				in
+				    Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

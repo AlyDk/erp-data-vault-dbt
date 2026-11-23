@@ -1,0 +1,69 @@
+/// Home table for report measures.
+table _Measures
+	lineageTag: 2859d986-b540-4a95-ae82-2ed994092a38
+
+	/// Order line sales amount after discount. Ties to the ERP line totals.
+	measure Sales = SUM ( fact_sales[sales_amount] )
+		formatString: #,0
+		displayFolder: Sales
+		lineageTag: 4e3bd19a-b06e-4db2-bb54-6298871ccc96
+
+	measure Orders = DISTINCTCOUNT ( fact_sales[sales_order_id] )
+		formatString: #,0
+		displayFolder: Sales
+		lineageTag: 12824141-50d5-464a-ba3a-74f0abb133b2
+
+	measure Units = SUM ( fact_sales[order_qty] )
+		formatString: #,0
+		displayFolder: Sales
+		lineageTag: 38ca9e28-d3d2-4e52-a023-6986d00ab184
+
+	measure 'Avg Order Value' = DIVIDE ( [Sales], [Orders] )
+		formatString: #,0.00
+		displayFolder: Sales
+		lineageTag: ab928f27-6956-4a34-8b00-6c74e0d8e5f9
+
+	measure 'Sales LY' = CALCULATE ( [Sales], SAMEPERIODLASTYEAR ( dim_date[date_day] ) )
+		formatString: #,0
+		displayFolder: Sales
+		lineageTag: 292d2087-6024-4293-81b7-929deddcefdb
+
+	measure 'Sales YoY %' = DIVIDE ( [Sales] - [Sales LY], [Sales LY] )
+		formatString: 0.0%
+		displayFolder: Sales
+		lineageTag: 41158b8d-ffa1-4b0d-a4be-b10d5b34f6ee
+
+	measure 'Stock Qty' = SUM ( fact_inventory[quantity_on_hand] )
+		formatString: #,0
+		displayFolder: Inventory
+		lineageTag: 2bc77c4c-772f-4825-b4f2-137a27a061b6
+
+	/// Current stock valued at standard cost.
+	measure 'Stock Value' = SUM ( fact_inventory[stock_value_at_standard_cost] )
+		formatString: #,0
+		displayFolder: Inventory
+		lineageTag: 6ded3166-97ae-4de0-bd08-a016fd04cad8
+
+	/// Stocked products whose quantity on hand is below their reorder point.
+	measure 'Products Below Reorder Point' =
+			COUNTROWS (
+			    FILTER (
+			        VALUES ( dim_product[product_key] ),
+			        NOT ISBLANK ( [Stock Qty] )
+			            && [Stock Qty] < CALCULATE ( MAX ( dim_product[reorder_point] ) )
+			    )
+			)
+		formatString: #,0
+		displayFolder: Inventory
+		lineageTag: 5e11b384-6527-427e-9d00-c621364afa34
+
+	column placeholder
+		isHidden
+		lineageTag: da3b519d-1478-490d-b3ef-695103509d37
+		isNameInferred
+		sourceColumn: [placeholder]
+
+	partition _Measures = calculated
+		mode: import
+		source = ROW ( "placeholder", BLANK () )
+

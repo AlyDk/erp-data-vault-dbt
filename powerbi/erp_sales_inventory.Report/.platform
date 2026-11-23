@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "erp_sales_inventory"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "078cefa6-c8cd-4fd5-a280-63a62559d175"
+  }
+}
