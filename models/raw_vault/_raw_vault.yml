@@ -1,0 +1,149 @@
+version: 2
+
+models:
+  # Hubs: one row per business key
+  - name: hub_customer
+    description: "Every customer business key, first time seen. Fed by the customer master and sales orders."
+    columns:
+      - name: hk_customer
+        data_tests: [unique, not_null]
+      - name: customer_id
+        data_tests: [unique, not_null]
+
+  - name: hub_product
+    description: "Every product business key, first time seen. Fed by product master, order lines, stock and movements."
+    columns:
+      - name: hk_product
+        data_tests: [unique, not_null]
+      - name: product_id
+        data_tests: [unique, not_null]
+
+  - name: hub_sales_order
+    description: "Every sales order business key, first time seen."
+    columns:
+      - name: hk_sales_order
+        data_tests: [unique, not_null]
+      - name: sales_order_id
+        data_tests: [unique, not_null]
+
+  - name: hub_location
+    description: "Every warehouse or production location, first time seen."
+    columns:
+      - name: hk_location
+        data_tests: [unique, not_null]
+      - name: location_id
+        data_tests: [unique, not_null]
+
+  # Links: relationships between hubs
+  - name: link_sales_order_customer
+    description: "Which customer placed which sales order."
+    columns:
+      - name: hk_sales_order_customer
+        data_tests: [unique, not_null]
+      - name: hk_sales_order
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('hub_sales_order'), field: hk_sales_order}
+      - name: hk_customer
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('hub_customer'), field: hk_customer}
+
+  - name: link_sales_order_line
+    description: "Order lines: sales order to product, with the line ID as dependent child key."
+    columns:
+      - name: hk_sales_order_line
+        data_tests: [unique, not_null]
+      - name: hk_sales_order
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('hub_sales_order'), field: hk_sales_order}
+      - name: hk_product
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('hub_product'), field: hk_product}
+
+  - name: link_product_location
+    description: "Which product is stocked at which location."
+    columns:
+      - name: hk_product_location
+        data_tests: [unique, not_null]
+      - name: hk_product
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('hub_product'), field: hk_product}
+      - name: hk_location
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('hub_location'), field: hk_location}
+
+  # Satellites: insert-only history, one version per key and load
+  - name: sat_customer
+    description: "Customer attributes over time."
+    data_tests:
+      - unique_combination:
+          arguments: {columns: [hk_customer, load_dts]}
+    columns:
+      - name: hk_customer
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('hub_customer'), field: hk_customer}
+
+  - name: sat_product
+    description: "Product attributes and prices over time."
+    data_tests:
+      - unique_combination:
+          arguments: {columns: [hk_product, load_dts]}
+    columns:
+      - name: hk_product
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('hub_product'), field: hk_product}
+
+  - name: sat_sales_order
+    description: "Order header status, dates and amounts over time."
+    data_tests:
+      - unique_combination:
+          arguments: {columns: [hk_sales_order, load_dts]}
+    columns:
+      - name: hk_sales_order
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('hub_sales_order'), field: hk_sales_order}
+      - name: status
+        data_tests:
+          - accepted_values:
+              arguments: {values: [1, 2, 3, 4, 5, 6]}
+
+  - name: sat_sales_order_line
+    description: "Quantity and price per order line over time."
+    data_tests:
+      - unique_combination:
+          arguments: {columns: [hk_sales_order_line, load_dts]}
+    columns:
+      - name: hk_sales_order_line
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('link_sales_order_line'), field: hk_sales_order_line}
+
+  - name: sat_product_location_stock
+    description: "Stock on hand per product and location over time."
+    data_tests:
+      - unique_combination:
+          arguments: {columns: [hk_product_location, load_dts]}
+    columns:
+      - name: hk_product_location
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('link_product_location'), field: hk_product_location}
