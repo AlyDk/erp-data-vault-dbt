@@ -9,6 +9,11 @@ rebuilds and tests everything every day.
 
 **Live documentation and lineage:** https://alydk.github.io/erp-data-vault-dbt/
 
+> **Scope.** This is a deliberately small, focused project. Its purpose is to show that I can build
+> and run the engineering behind reporting: extraction, a history-preserving Data Vault, tests that
+> reconcile to the source, and a scheduled pipeline. The Power BI report is a thin serving layer to
+> show the marts in use. It is not the focus, and it is not meant as a design showcase.
+
 ![Sales overview](docs/images/sales.png)
 
 ## The business problem
@@ -77,7 +82,8 @@ is overwritten.
 
 ## Report
 
-Two pages on the star schema: sales overview (KPIs, monthly trend against the same month last year,
+A simple serving layer, kept minimal on purpose: the value of this project is in the pipeline and the
+model underneath. Two pages on the star schema: sales overview (KPIs, monthly trend against the same month last year,
 category and region) and inventory (stock value by location and category, products below reorder
 point).
 
