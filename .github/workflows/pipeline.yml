@@ -1,0 +1,83 @@
+name: daily-pipeline
+
+on:
+  schedule:
+    - cron: "17 3 * * *"   # every day at 03:17 UTC (06:17 Kuwait)
+  workflow_dispatch:        # run by hand from the Actions tab
+  push:
+    branches: [main]
+    paths: ["models/**", "macros/**", "tests/**", "scripts/**", "dbt_project.yml", "requirements.txt", ".github/workflows/**"]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pipeline
+  cancel-in-progress: false
+
+env:
+  DBT_PROFILES_DIR: .
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dbt
+        run: pip install -r requirements.txt
+
+      # Restore the warehouse from the previous run so the vault keeps its history.
+      - name: Restore warehouse
+        uses: actions/cache/restore@v4
+        with:
+          path: data/warehouse.duckdb
+          key: warehouse-${{ github.run_id }}
+          restore-keys: warehouse-
+
+      - name: Extract ERP source files
+        run: python scripts/extract_source.py
+
+      - name: Load bronze
+        run: python scripts/load_bronze.py
+
+      - name: Build and test (dbt build)
+        run: dbt build
+
+      - name: Save warehouse for the next run
+        if: success()
+        uses: actions/cache/save@v4
+        with:
+          path: data/warehouse.duckdb
+          key: warehouse-${{ github.run_id }}
+
+      - name: Generate dbt docs
+        run: |
+          dbt docs generate
+          mkdir -p site
+          cp target/index.html target/manifest.json target/catalog.json site/
+
+      - name: Upload docs site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy-docs:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish dbt docs to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
